@@ -1,0 +1,4 @@
+VIRTUAL/
+.ipynb_checkpoints/
+vectorstore
+.env
