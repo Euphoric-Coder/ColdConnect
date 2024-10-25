@@ -11,6 +11,8 @@ import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { Textarea } from "./components/ui/textarea";
+import { TiClipboard } from "react-icons/ti";
+import Typewriter from "typewriter-effect";
 
 const App: React.FC = () => {
   const [jobUrl, setJobUrl] = useState("");
@@ -44,8 +46,13 @@ const App: React.FC = () => {
     }
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(emailContent);
+    alert("Cold email copied to clipboard!");
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white flex flex-col items-center justify-center px-5 py-16 space-y-16">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-blue-900 to-black text-white flex flex-col items-center justify-center px-5 py-16 space-y-16">
       {/* Header Section */}
       <header className="text-center space-y-4">
         <h1 className="text-6xl font-extrabold drop-shadow-lg tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500">
@@ -57,7 +64,30 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Form Section */}
-      <main className="w-full max-w-5xl space-y-12">
+      <main className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-16">
+        {/* Left Side - Typewriter Text */}
+        <div className="flex flex-col justify-center space-y-8 text-center md:text-left">
+          <h2 className="text-4xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-teal-400">
+            <Typewriter
+              options={{
+                strings: [
+                  "Ready to Ace Your Job Application?",
+                  "Let us generate the perfect cold email for you.",
+                  "Stand out from the crowd!",
+                ],
+                autoStart: true,
+                loop: true,
+              }}
+            />
+          </h2>
+          <p className="text-lg text-gray-300 tracking-wider">
+            With our Cold Mail Generator, you can create professional, tailored
+            cold emails in just a few clicks. Enter the job URL and upload your
+            resume to get started!
+          </p>
+        </div>
+
+        {/* Right Side - Form Section */}
         <Card className="w-full bg-gradient-to-br from-gray-800 to-gray-700 border border-white/10 shadow-2xl rounded-3xl transition-all transform hover:scale-105 duration-300 ease-in-out">
           <CardHeader className="text-center py-8">
             <CardTitle className="text-4xl font-bold text-white">
@@ -111,27 +141,53 @@ const App: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+      </main>
 
-        {/* Generated Cold Mail Section */}
-        {emailContent && (
-          <div className="w-full">
-            <Card className="bg-white/10 text-white rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
-              <CardHeader className="p-6 bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-700">
-                <CardTitle className="text-3xl font-bold text-white">
-                  Generated Cold Mail
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 max-h-96 overflow-y-auto text-white text-opacity-90">
+      {/* Generated Cold Mail Section */}
+      {emailContent && (
+        <section className="w-full max-w-5xl space-y-6">
+          <h3 className="text-3xl font-bold text-center">
+            Your Generated Cold Email
+          </h3>
+          <Card className="bg-white/10 text-white rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+            <CardHeader className="p-6 bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-700 flex justify-between items-center">
+              <CardTitle className="text-3xl font-bold text-white">
+                Cold Email
+              </CardTitle>
+              <Button
+                onClick={copyToClipboard}
+                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg text-sm font-semibold"
+              >
+                <TiClipboard className="h-5 w-5" />
+                <span>Copy Email</span>
+              </Button>
+            </CardHeader>
+            <CardContent className="p-6 max-h-96 overflow-y-auto text-white text-opacity-90">
+              <div className="bg-gray-900 p-6 rounded-lg shadow-inner border border-white/20">
+                <div className="mb-6 space-y-2">
+                  <p className="text-sm font-semibold text-gray-300">
+                    <span className="text-white">From:</span> Your Name
+                    (your-email@example.com)
+                  </p>
+                  <p className="text-sm font-semibold text-gray-300">
+                    <span className="text-white">To:</span> Hiring Manager
+                    (manager@example.com)
+                  </p>
+                  <p className="text-sm font-semibold text-gray-300">
+                    <span className="text-white">Subject:</span> Application for
+                    [Job Title]
+                  </p>
+                </div>
                 <Textarea
                   readOnly
-                  className="w-full h-64 bg-white/10 p-4 rounded-lg border border-white/20 shadow-inner"
+                  className="w-full h-64 bg-white/10 p-4 rounded-lg border border-white/20 shadow-inner whitespace-pre-wrap"
                   value={emailContent}
                 />
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </main>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
       {/* Footer Section */}
       <footer className="text-center text-sm text-white/60 py-12">

@@ -56,7 +56,7 @@ class Generate:
             ### PROJECTS LINK (OPTIONAL BUT SHOULD GIVE IF POSSIBLE PROJECT LINKS):
             {links_list}
             
-            ### INSTRUCTION:Se
+            ### INSTRUCTION:
             You are a hiring assistant responsible for reviewing the resume of a candidate. The resume text provided may belong to 
             a different person. Your task is to carefully analyze the content of the resume, identify relevant experience, skills, 
             and projects that match the job description provided above. 
@@ -71,7 +71,7 @@ class Generate:
             Also mention relevant project links as mentioned in the PROJECT LINKS SECTION for the job. Also note that these projects are 
             different from the projects mentioned in the resume. So Give links with the project name accordingly.
 
-            At first try to mention the skills from the resume_text (same as somewhat matches the skills in the job_description)
+            At first try to mention the skills from the {resume_text} (same as somewhat matches the skills in the job_description)
             ### EMAIL (NO PREAMBLE):
             """
         )
