@@ -17,6 +17,7 @@ const App: React.FC = () => {
   const [jobUrl, setJobUrl] = useState("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [emailContent, setEmailContent] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
 
   const handleSubmit = async () => {
     if (!resumeFile || !jobUrl) {
@@ -48,6 +49,18 @@ const App: React.FC = () => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(emailContent);
     alert("Cold email copied to clipboard!");
+  };
+
+  const sendEmail = () => {
+    if (!recipientEmail) {
+      alert("Please enter a recipient email address.");
+      return;
+    }
+
+    const mailtoLink = `mailto:${recipientEmail}?subject=Job Application&body=${encodeURIComponent(
+      emailContent
+    )}`;
+    window.location.href = mailtoLink;
   };
 
   return (
@@ -179,6 +192,29 @@ const App: React.FC = () => {
                 <p className="text-blue-900 whitespace-pre-wrap leading-relaxed">
                   {emailContent}
                 </p>
+                {/* Send Email Section */}
+                <div className="mt-6 space-y-4">
+                  <Label
+                    htmlFor="recipient-email"
+                    className="text-lg font-semibold text-blue-900"
+                  >
+                    Recipient Email
+                  </Label>
+                  <Input
+                    id="recipient-email"
+                    type="email"
+                    placeholder="recipient@example.com"
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                    className="w-full bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-3 shadow-md"
+                  />
+                  <Button
+                    onClick={sendEmail}
+                    className="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"
+                  >
+                    Send Email
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
