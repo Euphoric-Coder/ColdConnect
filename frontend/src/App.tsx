@@ -10,13 +10,12 @@ import {
 import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
-
 import Typewriter from "typewriter-effect";
 
 const App: React.FC = () => {
   const [jobUrl, setJobUrl] = useState("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [emailContent, setEmailContent] = useState("");
+  const [emailContent, setEmailContent] = useState({ subject: "", body: "" });
   const [recipientEmail, setRecipientEmail] = useState("");
 
   const handleSubmit = async () => {
@@ -34,20 +33,40 @@ const App: React.FC = () => {
         "http://localhost:8900/generate-email",
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      setEmailContent(response.data.email);
+      setEmailContent(response.data);
     } catch (error) {
       console.error("Error generating email:", error);
       alert("Failed to generate email.");
     }
   };
 
+  const sendMail = async () => {
+    const formData = new FormData();
+    formData.append("recipient_email", recipientEmail); // Replace with a dynamic email if needed
+    formData.append("subject", emailContent.subject);
+    formData.append("body", emailContent.body);
+
+    try {
+      await axios.post("http://localhost:8900/send-email", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      alert("Email sent successfully!");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+      alert("Failed to send email: " + error);
+    }
+  };
+
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(emailContent);
+    const textarea = document.createElement("textarea");
+    textarea.value = emailContent.body;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
     alert("Cold email copied to clipboard!");
   };
 
@@ -57,9 +76,10 @@ const App: React.FC = () => {
       return;
     }
 
-    const mailtoLink = `mailto:${recipientEmail}?subject=Job Application&body=${encodeURIComponent(
-      emailContent
-    )}`;
+    const plainTextBody = emailContent.body.replace(/<[^>]+>/g, ""); // Strip HTML tags for mailto
+    const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(
+      emailContent.subject
+    )}&body=${encodeURIComponent(plainTextBody)}`;
     window.location.href = mailtoLink;
   };
 
@@ -156,7 +176,7 @@ const App: React.FC = () => {
       </main>
 
       {/* Generated Cold Mail Section */}
-      {emailContent && (
+      {emailContent.subject && (
         <section className="w-full max-w-5xl space-y-8">
           <h3 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
             Generated Cold Email
@@ -174,47 +194,39 @@ const App: React.FC = () => {
               </Button>
             </CardHeader>
             <CardContent className="p-8 space-y-4 bg-blue-50 rounded-b-3xl">
-              <div className="bg-blue-100 p-6 rounded-lg shadow-inner border border-blue-300 space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold text-blue-700">
-                    <span className="text-blue-900">From:</span> Your Name
-                    (your-email@example.com)
-                  </p>
-                  <p className="text-sm font-semibold text-blue-700">
-                    <span className="text-blue-900">To:</span> Hiring Manager
-                    (manager@example.com)
-                  </p>
-                  <p className="text-sm font-semibold text-blue-700">
-                    <span className="text-blue-900">Subject:</span> Application
-                    for [Job Title]
-                  </p>
-                </div>
-                <p className="text-blue-900 whitespace-pre-wrap leading-relaxed">
-                  {emailContent}
-                </p>
-                {/* Send Email Section */}
-                <div className="mt-6 space-y-4">
-                  <Label
-                    htmlFor="recipient-email"
-                    className="text-lg font-semibold text-blue-900"
-                  >
-                    Recipient Email
-                  </Label>
-                  <Input
-                    id="recipient-email"
-                    type="email"
-                    placeholder="recipient@example.com"
-                    value={recipientEmail}
-                    onChange={(e) => setRecipientEmail(e.target.value)}
-                    className="w-full bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-3 shadow-md"
-                  />
-                  <Button
-                    onClick={sendEmail}
-                    className="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    Send Email
-                  </Button>
-                </div>
+              {/* Display Subject */}
+              <h4 className="text-xl font-bold text-blue-800">
+                Subject: {emailContent.subject}
+              </h4>
+
+              {/* Render HTML Content */}
+              <div
+                className="bg-blue-100 p-6 rounded-lg shadow-inner border border-blue-300 space-y-4"
+                dangerouslySetInnerHTML={{ __html: emailContent.body }}
+              ></div>
+
+              {/* Send Email Section */}
+              <div className="mt-6 space-y-4">
+                <Label
+                  htmlFor="recipient-email"
+                  className="text-lg font-semibold text-blue-900"
+                >
+                  Recipient Email
+                </Label>
+                <Input
+                  id="recipient-email"
+                  type="email"
+                  placeholder="recipient@example.com"
+                  value={recipientEmail}
+                  onChange={(e) => setRecipientEmail(e.target.value)}
+                  className="w-full bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-3 shadow-md"
+                />
+                <Button
+                  onClick={sendMail}
+                  className="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"
+                >
+                  Send Email
+                </Button>
               </div>
             </CardContent>
           </Card>

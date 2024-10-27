@@ -43,41 +43,49 @@ class Generate:
         except OutputParserException:
             raise OutputParserException("Context too big. Unable to parse jobs.")
         return res if isinstance(res, list) else [res]
-
     def write_mail(self, job, links, resume):
         prompt_email = PromptTemplate.from_template(
             """
             ### JOB DESCRIPTION:
             {job_description}
-            
+
             ### RESUME TEXT:
             {resume_text}
-            
-            ### PROJECTS LINK (OPTIONAL BUT SHOULD GIVE IF POSSIBLE PROJECT LINKS):
+
+            ### PROJECTS LINK (optional, if any):
             {links_list}
-            
+
             ### INSTRUCTION:
-            You are a hiring assistant responsible for reviewing the resume of a candidate. The resume text provided may belong to 
-            a different person. Your task is to carefully analyze the content of the resume, identify relevant experience, skills, 
-            and projects that match the job description provided above. 
-            
-            Craft a tailored cold email application that highlights the candidate's technical skills (in points), educational qualifications, achievements, and 
-            experiences aligning with the job requirements. 
-            If applicable, refer to relevant projects from the provided links to 
-            strengthen the candidate's profile for this specific role.
-            
-            Ensure the email is professional, concise, and directly addresses the needs and expectations outlined in the job description.
+            You are a hiring assistant drafting a professional HTML cold email for a candidate applying to the job described. Analyze the resume to identify experience, skills, and projects that match the job description. The email should be concise, visually appealing, and highlight the candidate’s qualifications with clear sections in HTML format.
 
-            Also mention relevant project links as mentioned in the PROJECT LINKS SECTION for the job. Also note that these projects are 
-            different from the projects mentioned in the resume. So Give links with the project name accordingly.
+            **Generate the response in JSON with the following format:**
+            - "subject": A concise and relevant subject line.
+            - "body": The HTML content of the email, formatted as follows:
 
-            At first try to mention the skills from the {resume_text} (same as somewhat matches the skills in the job_description)
-            ### EMAIL (NO PREAMBLE):
+            FOLLOW THESE WHEN WRITING THE E-MAIL (Also don't mention them as headings in the E-MAIL rather as paragraphs. Also bold and make them italic as necessary):
+            1. Briefly express my enthusiasm for the role explaining why i perfectly fit for the role (give information based on my resume)
+            2. Provide a bullet-point list of relevant skills from `{resume_text}` that align with `{job_description}`, with key points in bold. [make keywords bold and italic]
+            3. List specific projects that demonstrate relevant experience, using links from `{links_list}` and descriptive project names if provided. [make keywords bold and italic]
+            4. Summarize the candidate’s educational background and notable achievements that support their fit for the role. [make keywords bold and italic]
+            5. Also mention and write a little bit about the projects(one by one) on my resume. [make keywords bold and italic]
+            6. Close with a professional statement, expressing interest in discussing qualifications further.
+            7. Lastly, end the mail with formal thanks, my name and my contact details (with clickable links as target="_blank")
+
+            The body should be in HTML format, with the following requirements:
+            - Bold key skills and qualifications.
+            - Use bullet points for lists.
+            - Links from `{links_list}` should be clickable URLs with project names.
+
+            Return the response strictly in JSON format without any additional details.
             """
         )
         chain_email = prompt_email | self.llm
         res = chain_email.invoke({"job_description": str(job), "resume_text": resume, "links_list": links})
-        return res.content
+        json_parser = JsonOutputParser()
+        try:
+            return json_parser.parse(res.content)
+        except OutputParserException:
+            raise OutputParserException("Error in parsing JSON response.")
 
 
 if __name__ == "__main__":
