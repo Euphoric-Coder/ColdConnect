@@ -1,6 +1,78 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Alignment Classes */
+.ql-align-center {
+  text-align: center !important;
+}
+.ql-align-right {
+  text-align: right !important;
+}
+.ql-align-justify {
+  text-align: justify !important;
+}
+
+/* Font Family Classes */
+.ql-font-serif {
+  font-family: serif;
+}
+.ql-font-monospace {
+  font-family: monospace;
+}
+
+/* Image Styling */
+.ql-editor img {
+  max-width: 100%; /* Responsive images */
+  height: auto;
+  display: block;
+  margin: 10px auto; /* Center images */
+}
+
+/* Set a maximum height for the editor content area inside the dialog */
+.custom-quill-editor {
+  max-height: 60vh; /* Limits editor's height to 60% of viewport height */
+  overflow-y: auto; /* Enables scrolling within the editor */
+}
+
+/* Ensure only one scrollbar appears by limiting the height of the editor itself */
+.custom-quill-editor .ql-container {
+  height: 100%; /* Full height for content area without overflowing */
+}
+
+.custom-quill-editor .ql-editor {
+  max-height: 50vh; /* Limits content area height */
+  overflow-y: auto; /* Content scrolls within this area */
+  padding: 1rem; /* Adds padding for comfortable reading */
+  font-size: 1rem; /* Font size for readability */
+  line-height: 1.6;
+}
+
+/* Toolbar remains fixed while scrolling content */
+.custom-quill-editor .ql-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #ffffff;
+}
+
+/* Adjusted link styles within editor and preview */
+.custom-quill-preview .ql-editor a {
+  color: aquamarine;
+  text-decoration: underline;
+}
+
+/* Ensure dialog content doesn't overflow the viewport */
+.expanded-preview-dialog .ql-editor {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  max-height: 80vh; /* Limit height in expanded mode */
+  overflow-y: auto;
+}
+
+
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;

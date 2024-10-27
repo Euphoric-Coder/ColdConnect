@@ -21,6 +21,7 @@ import {
 import Typewriter from "typewriter-effect";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
+import { AiOutlineExpand } from "react-icons/ai";
 
 const App: React.FC = () => {
   const [jobUrl, setJobUrl] = useState("");
@@ -28,9 +29,10 @@ const App: React.FC = () => {
   const [emailContent, setEmailContent] = useState({ subject: "", body: "" });
   const [recipientEmail, setRecipientEmail] = useState("");
   const [recipients, setRecipients] = useState<string[]>([]);
-  const [showDialog, setShowDialog] = useState(false);
+  const [showSendDialog, setShowSendDialog] = useState(false);
+  const [showExpandedPreview, setShowExpandedPreview] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [showEditor, setShowEditor] = useState(false);
+  const [showEditorDialog, setShowEditorDialog] = useState(false);
   const [editedBody, setEditedBody] = useState(emailContent.body);
   const [editedSubject, setEditedSubject] = useState(emailContent.subject);
 
@@ -63,15 +65,15 @@ const App: React.FC = () => {
 
   const sendMail = async () => {
     if (recipients.length === 0) {
-      alert("Please add at least one recipient email address.");
+      setShowSendDialog(true);
       return;
     }
 
     const formData = new FormData();
     formData.append("recipient_email", recipients.join(","));
     formData.append("subject", editedSubject);
-    formData.append("body", editedBody);
-
+    formData.append("body", emailContent.body);
+    console.log(emailContent.body);
     try {
       await axios.post("http://localhost:8900/send-email", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -95,6 +97,15 @@ const App: React.FC = () => {
       }
       setRecipientEmail("");
     }
+  };
+
+  const editRecipient = (index: number) => {
+    setRecipientEmail(recipients[index]);
+    setEditIndex(index);
+  };
+
+  const deleteRecipient = (index: number) => {
+    setRecipients(recipients.filter((_, i) => i !== index));
   };
 
   const copyToClipboard = () => {
@@ -210,98 +221,176 @@ const App: React.FC = () => {
               <CardTitle className="text-3xl font-bold text-blue-900">
                 Cold Email Preview
               </CardTitle>
-              <Button
-                onClick={copyToClipboard}
-                className="flex items-center space-x-2 bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded-lg text-sm font-semibold"
-              >
-                <span>Copy Email</span>
-              </Button>
+              <div className="flex items-center">
+                <Button
+                  onClick={copyToClipboard}
+                  className="flex items-center space-x-2 bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded-lg text-sm font-semibold"
+                >
+                  Copy Email
+                </Button>
+                <AiOutlineExpand
+                  className="ml-4 cursor-pointer text-xl text-blue-600 hover:text-blue-800"
+                  onClick={() => setShowExpandedPreview(true)}
+                />
+              </div>
             </CardHeader>
             <CardContent className="p-8 space-y-4 bg-blue-50 rounded-b-3xl">
-              <h4 className="text-xl font-bold text-blue-800">
+              <h4 className="text-2xl font-bold text-blue-800">
                 Subject: {emailContent.subject}
               </h4>
               <ReactQuill
                 value={emailContent.body}
                 readOnly={true}
                 theme="bubble"
-                className="bg-blue-50 p-4 rounded-lg shadow-inner border border-blue-300 max-h-96 overflow-y-auto"
+                className="custom-quill-preview bg-blue-50 p-4 rounded-lg shadow-inner border border-blue-300 max-h-96 overflow-y-auto"
               />
 
               {/* Send and Edit Buttons */}
               <div className="flex space-x-4 mt-6">
                 <Button
-                  onClick={sendMail}
+                  onClick={() => setShowSendDialog(true)}
                   className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full"
                 >
                   Send Email
                 </Button>
                 <Button
-                  onClick={() => setShowEditor(true)}
+                  onClick={() => setShowEditorDialog(true)}
                   className="flex-1 py-3 bg-gradient-to-r from-teal-500 to-blue-400 hover:from-blue-400 hover:to-teal-500 shadow-lg text-lg font-semibold rounded-full"
                 >
                   Edit Email
                 </Button>
               </div>
-
-              {/* Rich Text Editor Dialog */}
-              <Dialog open={showEditor} onOpenChange={setShowEditor}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Edit Email Content</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <Label
-                      htmlFor="edited-subject"
-                      className="text-lg font-semibold text-blue-900"
-                    >
-                      Subject
-                    </Label>
-                    <Input
-                      id="edited-subject"
-                      type="text"
-                      value={editedSubject}
-                      onChange={(e) => setEditedSubject(e.target.value)}
-                      className="w-full bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-3 shadow-md"
-                    />
-                    <Label
-                      htmlFor="email-body-editor"
-                      className="text-lg font-semibold text-blue-900"
-                    >
-                      Email Content
-                    </Label>
-                    <ReactQuill
-                      id="email-body-editor"
-                      theme="snow"
-                      value={editedBody}
-                      onChange={setEditedBody}
-                      className="bg-white rounded-lg shadow-md max-h-96 overflow-y-auto"
-                    />
-                    <Button
-                      className="w-full mt-4 py-3 bg-gradient-to-r from-teal-500 to-blue-400 hover:from-blue-400 hover:to-teal-500 shadow-lg text-lg font-semibold rounded-full"
-                      onClick={() => {
-                        setShowEditor(false);
-                        setEmailContent({
-                          subject: editedSubject,
-                          body: editedBody,
-                        });
-                      }}
-                    >
-                      Save Changes
-                    </Button>
-                    <Button
-                      onClick={sendMail}
-                      className="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full"
-                    >
-                      Send Email
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
             </CardContent>
           </Card>
         </section>
       )}
+
+      {/* Expanded Cold Email Preview Dialog */}
+      <Dialog open={showExpandedPreview} onOpenChange={setShowExpandedPreview}>
+        <DialogContent className="expanded-preview-dialog">
+          <DialogHeader>
+            <DialogTitle>Full Cold Email Preview</DialogTitle>
+          </DialogHeader>
+          <ReactQuill
+            value={emailContent.body}
+            readOnly={true}
+            theme="bubble"
+            className="bg-blue-50 p-4 rounded-lg shadow-inner border border-blue-300 overflow-y-auto max-h-[80vh]"
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Email Dialog */}
+      <Dialog open={showEditorDialog} onOpenChange={setShowEditorDialog}>
+        <DialogContent className="max-w-6xl mx-auto p-6">
+          <DialogHeader>
+            <DialogTitle>Edit Cold Email</DialogTitle>
+          </DialogHeader>
+          <span className="inline-flex items-center gap-3 ">
+            <Label
+              htmlFor="subject"
+              className="text-lg font-semibold text-blue-900"
+            >
+              Subject:
+            </Label>
+            <Input
+              id="subject"
+              type="text"
+              value={editedSubject}
+              onChange={(e) => setEditedSubject(e.target.value)}
+              className="w-full mb-4 mt-2 bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-4 shadow-md"
+            />
+          </span>
+          <div className="rounded-lg border border-blue-300 shadow-md">
+            <ReactQuill
+              value={editedBody}
+              onChange={setEditedBody}
+              theme="snow"
+              className="custom-quill-editor p-3 rounded-lg overflow-auto"
+            />
+          </div>
+          <div className="flex justify-end mt-4 space-x-4">
+            <Button
+              onClick={() => setShowEditorDialog(false)}
+              className="bg-gray-400 text-white rounded-lg px-4 py-2"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                setEmailContent({ subject: editedSubject, body: editedBody });
+                setShowEditorDialog(false);
+              }}
+              className="bg-blue-500 text-white rounded-lg px-4 py-2"
+            >
+              Save Changes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Send Email Dialog */}
+      <Dialog open={showSendDialog} onOpenChange={setShowSendDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Recipient Emails</DialogTitle>
+            <DialogDescription>
+              Add email addresses to the recipient list. You can edit or delete
+              them as needed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              type="email"
+              placeholder="Enter recipient email"
+              value={recipientEmail}
+              onChange={(e) => setRecipientEmail(e.target.value)}
+              className="w-full mt-2 bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-4 shadow-md"
+            />
+            <Button
+              className="w-full mt-4 py-2 bg-teal-400 text-white rounded-md"
+              onClick={addOrUpdateRecipientEmail}
+            >
+              {editIndex !== null ? "Update Email" : "Add Email"}
+            </Button>
+            <div className="space-y-2 mt-4">
+              <h4 className="text-lg font-semibold text-blue-900">
+                Recipient List
+              </h4>
+              <ul className="list-disc pl-5 space-y-1 text-blue-700">
+                {recipients.map((email, index) => (
+                  <li key={index} className="flex justify-between items-center">
+                    {email}
+                    <div className="flex space-x-2">
+                      <Button
+                        className="text-sm text-blue-600 hover:text-blue-800"
+                        onClick={() => editRecipient(index)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        className="text-sm text-red-600 hover:text-red-800"
+                        onClick={() => deleteRecipient(index)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <Button
+              className="w-full mt-6 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full"
+              onClick={() => {
+                sendMail();
+                setShowSendDialog(false);
+              }}
+            >
+              Send Email
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Footer Section */}
       <footer className="text-center text-sm text-blue-700 py-12">
