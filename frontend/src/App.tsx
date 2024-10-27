@@ -10,13 +10,29 @@ import {
 import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./components/ui/dialog";
 import Typewriter from "typewriter-effect";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 
 const App: React.FC = () => {
   const [jobUrl, setJobUrl] = useState("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [emailContent, setEmailContent] = useState({ subject: "", body: "" });
   const [recipientEmail, setRecipientEmail] = useState("");
+  const [recipients, setRecipients] = useState<string[]>([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const [editedBody, setEditedBody] = useState(emailContent.body);
+  const [editedSubject, setEditedSubject] = useState(emailContent.subject);
 
   const handleSubmit = async () => {
     if (!resumeFile || !jobUrl) {
@@ -37,6 +53,8 @@ const App: React.FC = () => {
         }
       );
       setEmailContent(response.data);
+      setEditedBody(response.data.body);
+      setEditedSubject(response.data.subject);
     } catch (error) {
       console.error("Error generating email:", error);
       alert("Failed to generate email.");
@@ -44,10 +62,15 @@ const App: React.FC = () => {
   };
 
   const sendMail = async () => {
+    if (recipients.length === 0) {
+      alert("Please add at least one recipient email address.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("recipient_email", recipientEmail); // Replace with a dynamic email if needed
-    formData.append("subject", emailContent.subject);
-    formData.append("body", emailContent.body);
+    formData.append("recipient_email", recipients.join(","));
+    formData.append("subject", editedSubject);
+    formData.append("body", editedBody);
 
     try {
       await axios.post("http://localhost:8900/send-email", formData, {
@@ -60,6 +83,20 @@ const App: React.FC = () => {
     }
   };
 
+  const addOrUpdateRecipientEmail = () => {
+    if (recipientEmail) {
+      if (editIndex !== null) {
+        const updatedRecipients = [...recipients];
+        updatedRecipients[editIndex] = recipientEmail;
+        setRecipients(updatedRecipients);
+        setEditIndex(null);
+      } else {
+        setRecipients([...recipients, recipientEmail]);
+      }
+      setRecipientEmail("");
+    }
+  };
+
   const copyToClipboard = () => {
     const textarea = document.createElement("textarea");
     textarea.value = emailContent.body;
@@ -68,19 +105,6 @@ const App: React.FC = () => {
     document.execCommand("copy");
     document.body.removeChild(textarea);
     alert("Cold email copied to clipboard!");
-  };
-
-  const sendEmail = () => {
-    if (!recipientEmail) {
-      alert("Please enter a recipient email address.");
-      return;
-    }
-
-    const plainTextBody = emailContent.body.replace(/<[^>]+>/g, ""); // Strip HTML tags for mailto
-    const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(
-      emailContent.subject
-    )}&body=${encodeURIComponent(plainTextBody)}`;
-    window.location.href = mailtoLink;
   };
 
   return (
@@ -194,40 +218,86 @@ const App: React.FC = () => {
               </Button>
             </CardHeader>
             <CardContent className="p-8 space-y-4 bg-blue-50 rounded-b-3xl">
-              {/* Display Subject */}
               <h4 className="text-xl font-bold text-blue-800">
                 Subject: {emailContent.subject}
               </h4>
+              <ReactQuill
+                value={emailContent.body}
+                readOnly={true}
+                theme="bubble"
+                className="bg-blue-50 p-4 rounded-lg shadow-inner border border-blue-300 max-h-96 overflow-y-auto"
+              />
 
-              {/* Render HTML Content */}
-              <div
-                className="bg-blue-100 p-6 rounded-lg shadow-inner border border-blue-300 space-y-4"
-                dangerouslySetInnerHTML={{ __html: emailContent.body }}
-              ></div>
-
-              {/* Send Email Section */}
-              <div className="mt-6 space-y-4">
-                <Label
-                  htmlFor="recipient-email"
-                  className="text-lg font-semibold text-blue-900"
-                >
-                  Recipient Email
-                </Label>
-                <Input
-                  id="recipient-email"
-                  type="email"
-                  placeholder="recipient@example.com"
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                  className="w-full bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-3 shadow-md"
-                />
+              {/* Send and Edit Buttons */}
+              <div className="flex space-x-4 mt-6">
                 <Button
                   onClick={sendMail}
-                  className="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full transition-all duration-300 ease-in-out transform hover:scale-105"
+                  className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full"
                 >
                   Send Email
                 </Button>
+                <Button
+                  onClick={() => setShowEditor(true)}
+                  className="flex-1 py-3 bg-gradient-to-r from-teal-500 to-blue-400 hover:from-blue-400 hover:to-teal-500 shadow-lg text-lg font-semibold rounded-full"
+                >
+                  Edit Email
+                </Button>
               </div>
+
+              {/* Rich Text Editor Dialog */}
+              <Dialog open={showEditor} onOpenChange={setShowEditor}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Email Content</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Label
+                      htmlFor="edited-subject"
+                      className="text-lg font-semibold text-blue-900"
+                    >
+                      Subject
+                    </Label>
+                    <Input
+                      id="edited-subject"
+                      type="text"
+                      value={editedSubject}
+                      onChange={(e) => setEditedSubject(e.target.value)}
+                      className="w-full bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-3 shadow-md"
+                    />
+                    <Label
+                      htmlFor="email-body-editor"
+                      className="text-lg font-semibold text-blue-900"
+                    >
+                      Email Content
+                    </Label>
+                    <ReactQuill
+                      id="email-body-editor"
+                      theme="snow"
+                      value={editedBody}
+                      onChange={setEditedBody}
+                      className="bg-white rounded-lg shadow-md max-h-96 overflow-y-auto"
+                    />
+                    <Button
+                      className="w-full mt-4 py-3 bg-gradient-to-r from-teal-500 to-blue-400 hover:from-blue-400 hover:to-teal-500 shadow-lg text-lg font-semibold rounded-full"
+                      onClick={() => {
+                        setShowEditor(false);
+                        setEmailContent({
+                          subject: editedSubject,
+                          body: editedBody,
+                        });
+                      }}
+                    >
+                      Save Changes
+                    </Button>
+                    <Button
+                      onClick={sendMail}
+                      className="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full"
+                    >
+                      Send Email
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         </section>

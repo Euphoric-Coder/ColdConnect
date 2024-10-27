@@ -51,11 +51,16 @@ async def send_email(
     recipient_email: str = Form(...), subject: str = Form(...), body: str = Form(...)
 ):
     try:
+        print(f"Recipient Email: {recipient_email}")  # Debugging statement
+        print(f"Subject: {subject}")
+        print(f"Body: {body}")
+
         service = GMail_API()
         email_message = create_email_message(subject, body, recipient_email)
         service.users().messages().send(userId="me", body=email_message).execute()
         return {"message": "Email sent successfully"}
     except Exception as e:
+        print(f"Error: {e}")  # Debugging statement
         return {"error": str(e)}
 
 
