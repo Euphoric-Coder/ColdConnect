@@ -271,10 +271,7 @@ const App: React.FC = () => {
                 {loading ? (
                   <div className="flex items-center justify-center animate-pulse">
                     <AiOutlineLoading3Quarters className="animate-spin mr-2" />
-                    Generating
-                    {Array.from({ length: 3 })
-                      .map((_, i) => (loading && i % 3 === 0 ? "." : ""))
-                      .join("")}
+                    {loadingText}
                   </div>
                 ) : (
                   "Generate Cold Email"
