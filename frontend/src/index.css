@@ -2,33 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Alignment Classes */
-.ql-align-center {
-  text-align: center !important;
-}
-.ql-align-right {
-  text-align: right !important;
-}
-.ql-align-justify {
-  text-align: justify !important;
-}
-
-/* Font Family Classes */
-.ql-font-serif {
-  font-family: serif;
-}
-.ql-font-monospace {
-  font-family: monospace;
-}
-
-/* Image Styling */
-.ql-editor img {
-  max-width: 100%; /* Responsive images */
-  height: auto;
-  display: block;
-  margin: 10px auto; /* Center images */
-}
-
 /* Set a maximum height for the editor content area inside the dialog */
 .custom-quill-editor {
   max-height: 60vh; /* Limits editor's height to 60% of viewport height */
@@ -58,19 +31,33 @@
 
 /* Adjusted link styles within editor and preview */
 .custom-quill-preview .ql-editor a {
-  color: aquamarine;
+  color: rgb(181, 40, 206);
   text-decoration: underline;
+}
+
+.custom-quill-preview .ql-editor a:hover {
+  color: purple;
+  text-decoration: none;
+}
+
+.custom-quill-preview .ql-editor {
+  font-size: 1.1rem;
 }
 
 /* Ensure dialog content doesn't overflow the viewport */
 .expanded-preview-dialog .ql-editor {
-  font-size: 1.25rem;
-  line-height: 1.6;
-  max-height: 80vh; /* Limit height in expanded mode */
-  overflow-y: auto;
+  font-size: 0.96rem;
 }
 
+.expanded-preview-dialog .ql-editor a {
+  color: rgb(181, 40, 206);
+  text-decoration: underline;
+}
 
+.expanded-preview-dialog .ql-editor a:hover {
+  color: purple;
+  text-decoration: none;
+}
 
 
 @layer base {

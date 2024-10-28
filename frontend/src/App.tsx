@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import {
   Card,
@@ -21,7 +21,8 @@ import {
 import Typewriter from "typewriter-effect";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
-import { AiOutlineExpand } from "react-icons/ai";
+import { AiOutlineExpand, AiOutlineLoading3Quarters } from "react-icons/ai";
+import ResumeUpload from "./components/Drag&Drop";
 
 const App: React.FC = () => {
   const [jobUrl, setJobUrl] = useState("");
@@ -36,11 +37,65 @@ const App: React.FC = () => {
   const [editedBody, setEditedBody] = useState(emailContent.body);
   const [editedSubject, setEditedSubject] = useState(emailContent.subject);
 
+  // For loading state
+  const [loading, setLoading] = useState(false);
+
+  // For loading text state
+  const [loadingText, setLoadingText] = useState("Generating");
+
+  // Ref for the end of the Generated Cold Mail Section
+  const endOfEmailRef = useRef<HTMLDivElement | null>(null);
+
+  // const handleSubmit = async () => {
+  //   if (!resumeFile || !jobUrl) {
+  //     alert("Please upload a resume and provide a job link.");
+  //     return;
+  //   }
+
+  //   // To start the loading
+  //   setLoading(true)
+  //   const formData = new FormData();
+  //   formData.append("job_url", jobUrl);
+  //   formData.append("resume", resumeFile);
+
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:8900/generate-email",
+  //       formData,
+  //       {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       }
+  //     );
+
+  //     setEmailContent(response.data);
+  //     setEditedBody(response.data.body);
+  //     setEditedSubject(response.data.subject);
+
+  //     // Scrolls to the end of the generated email section
+  //     setTimeout(() => {
+  //       endOfEmailRef.current?.scrollIntoView({ behavior: "smooth" });
+  //     }, 0);
+  //   } catch (error) {
+  //     console.error("Error generating email:", error);
+  //     alert("Failed to generate email.");
+  //   } finally {
+  //     // To stop the loading
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleFileSelect = (file: File | null) => {
+    setResumeFile(file);
+  };
+
   const handleSubmit = async () => {
     if (!resumeFile || !jobUrl) {
       alert("Please upload a resume and provide a job link.");
       return;
     }
+
+    // Start loading
+    setLoading(true);
 
     const formData = new FormData();
     formData.append("job_url", jobUrl);
@@ -54,12 +109,21 @@ const App: React.FC = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+
       setEmailContent(response.data);
       setEditedBody(response.data.body);
       setEditedSubject(response.data.subject);
+
+      // Scroll to the generated email section
+      setTimeout(() => {
+        endOfEmailRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
     } catch (error) {
       console.error("Error generating email:", error);
       alert("Failed to generate email.");
+    } finally {
+      // Stop loading
+      setLoading(false);
     }
   };
 
@@ -118,6 +182,19 @@ const App: React.FC = () => {
     alert("Cold email copied to clipboard!");
   };
 
+  useEffect(() => {
+    if (loading) {
+      const loadingInterval = setInterval(() => {
+        setLoadingText((prev) => {
+          if (prev === "Generating...") return "Generating";
+          else return prev + ".";
+        });
+      }, 500);
+
+      return () => clearInterval(loadingInterval);
+    }
+  }, [loading]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-200 via-blue-300 to-teal-100 text-gray-900 flex flex-col items-center justify-center px-5 py-16 space-y-16">
       {/* Header Section */}
@@ -155,7 +232,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Right Side - Form Section */}
-        <Card className="w-full bg-white/20 backdrop-blur-md border border-blue-300 shadow-2xl rounded-lg transition-all transform hover:scale-105 duration-300 ease-in-out">
+        <Card className="w-full bg-white/20 backdrop-blur-md border border-blue-300 shadow-2xl rounded-2xl">
           <CardHeader className="text-center py-6">
             <CardTitle className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-teal-400 to-blue-500">
               Get Started
@@ -171,40 +248,38 @@ const App: React.FC = () => {
                   htmlFor="job-url"
                   className="text-xl font-semibold text-blue-900"
                 >
-                  Job URL
+                  Job URL 🔍
                 </Label>
-                <Input
+                <input
                   id="job-url"
                   type="text"
                   placeholder="https://jobs.example.com"
                   value={jobUrl}
                   onChange={(e) => setJobUrl(e.target.value)}
-                  className="w-full mt-2 bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-4 shadow-md"
+                  className="w-full mt-2 bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-2 shadow-md"
                 />
               </div>
-              <div>
-                <Label
-                  htmlFor="resume"
-                  className="text-xl font-semibold text-blue-900"
-                >
-                  Upload Resume
-                </Label>
-                <Input
-                  id="resume"
-                  type="file"
-                  accept=".pdf"
-                  onChange={(e) => {
-                    if (e.target.files) setResumeFile(e.target.files[0]);
-                  }}
-                  className="w-full mt-2 bg-blue-50 text-blue-800 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-4 shadow-md"
-                />
-              </div>
-              <Button
-                className="w-full py-4 mt-6 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-xl font-semibold rounded-full transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl"
+              <ResumeUpload onFileSelect={handleFileSelect} />
+
+              <button
                 onClick={handleSubmit}
+                className={`w-full py-4 mt-6 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-xl font-semibold rounded-full transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl ${
+                  loading ? "cursor-not-allowed opacity-70" : ""
+                }`}
+                disabled={loading}
               >
-                Generate Cold Email
-              </Button>
+                {loading ? (
+                  <div className="flex items-center justify-center animate-pulse">
+                    <AiOutlineLoading3Quarters className="animate-spin mr-2" />
+                    Generating
+                    {Array.from({ length: 3 })
+                      .map((_, i) => (loading && i % 3 === 0 ? "." : ""))
+                      .join("")}
+                  </div>
+                ) : (
+                  "Generate Cold Email"
+                )}
+              </button>
             </div>
           </CardContent>
         </Card>
@@ -212,11 +287,14 @@ const App: React.FC = () => {
 
       {/* Generated Cold Mail Section */}
       {emailContent.subject && (
-        <section className="w-full max-w-5xl space-y-8">
-          <h3 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+        <section className="w-full max-w-7xl space-y-8">
+          <h3
+            className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-500"
+            id="cold-preview"
+          >
             Generated Cold Email
           </h3>
-          <Card className="bg-blue-100 text-blue-900 rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+          <Card className="bg-blue-100 text-blue-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out transform hover:shadow-2xl">
             <CardHeader className="p-6 bg-gradient-to-r from-blue-200 via-teal-100 to-blue-300 flex justify-between items-center rounded-t-3xl">
               <CardTitle className="text-3xl font-bold text-blue-900">
                 Cold Email Preview
@@ -234,17 +312,18 @@ const App: React.FC = () => {
                 />
               </div>
             </CardHeader>
-            <CardContent className="p-8 space-y-4 bg-blue-50 rounded-b-3xl">
+            <CardContent className="p-8 space-y-4 bg-blue-50 rounded-b-3xl ">
               <h4 className="text-2xl font-bold text-blue-800">
                 Subject: {emailContent.subject}
+                {/* Scrolls down for a better view of the generated cold mail */}
+                <div ref={endOfEmailRef}></div>
               </h4>
               <ReactQuill
                 value={emailContent.body}
                 readOnly={true}
                 theme="bubble"
-                className="custom-quill-preview bg-blue-50 p-4 rounded-lg shadow-inner border border-blue-300 max-h-96 overflow-y-auto"
+                className="custom-quill-preview bg-blue-50 p-4 rounded-lg shadow-inner border border-blue-300 overflow-auto"
               />
-
               {/* Send and Edit Buttons */}
               <div className="flex space-x-4 mt-6">
                 <Button
@@ -267,15 +346,17 @@ const App: React.FC = () => {
 
       {/* Expanded Cold Email Preview Dialog */}
       <Dialog open={showExpandedPreview} onOpenChange={setShowExpandedPreview}>
-        <DialogContent className="expanded-preview-dialog">
+        <DialogContent className="max-h-[80vh] overflow-auto max-w-5xl expanded-preview-dialog">
           <DialogHeader>
-            <DialogTitle>Full Cold Email Preview</DialogTitle>
+            <DialogTitle className="text-4xl">
+              Full Cold Email Preview
+            </DialogTitle>
           </DialogHeader>
           <ReactQuill
             value={emailContent.body}
             readOnly={true}
             theme="bubble"
-            className="bg-blue-50 p-4 rounded-lg shadow-inner border border-blue-300 overflow-y-auto max-h-[80vh]"
+            className="bg-blue-50 p-4 rounded-lg shadow-inner border border-blue-300"
           />
         </DialogContent>
       </Dialog>
