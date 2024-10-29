@@ -46,6 +46,19 @@ async def generate_email(job_url: str = Form(...), resume: UploadFile = Form(...
         return {"error": str(e)}
 
 
+@app.post("/fetch-company-name")
+async def fetch_company_name(job_url: str = Form(...)):
+    try:
+        # Initialize WebBaseLoader with the job URL and scrape page content
+        loader = WebBaseLoader([job_url])
+        job_page = loader.load().pop().page_content
+        
+        return chain.extract_company_name(job_page)
+    except Exception as e:
+        print({"error": str(e)})
+        return {"error": str(e)}
+
+
 @app.post("/send-email")
 async def send_email(
     recipient_email: str = Form(...), subject: str = Form(...), body: str = Form(...)

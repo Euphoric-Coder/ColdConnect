@@ -23,6 +23,30 @@ class Generate:
             page = reader.pages[page]
             resume += str(page.extract_text())
         return resume
+
+    def extract_company_name(self, job_description):
+        prompt_extract = PromptTemplate.from_template(
+            """
+            ### SCRAPED TEXT FROM WEBSITE:
+            {page_data}
+            ### INSTRUCTION:
+            The scraped text is from the career page or job posting of a company website.
+            Your task is to extract the company name accurately and return it in JSON format with the key `company_name`.
+            Only return the valid JSON with no additional text or explanation.
+            ### VALID JSON FORMAT (NO PREAMBLE):
+            """
+        )
+        chain_extract = prompt_extract | self.llm
+        res = chain_extract.invoke(input={"page_data": job_description})
+        
+        try:
+            json_parser = JsonOutputParser()
+            res = json_parser.parse(res.content)
+        except OutputParserException:
+            raise OutputParserException("Context too big or ambiguous. Unable to parse company name.")
+        
+        return res if isinstance(res, dict) else {"company_name": res}
+
     def extract_jobs(self, formatted_text):
         prompt_extract = PromptTemplate.from_template(
             """

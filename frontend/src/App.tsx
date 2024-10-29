@@ -12,7 +12,6 @@ import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -23,9 +22,11 @@ import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { AiOutlineExpand, AiOutlineLoading3Quarters } from "react-icons/ai";
 import ResumeUpload from "./components/Drag&Drop";
+import JobURLField from "./components/JobURLField";
 
 const App: React.FC = () => {
   const [jobUrl, setJobUrl] = useState("");
+  const [companyName, setCompanyName] = useState<string | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [emailContent, setEmailContent] = useState({ subject: "", body: "" });
   const [recipientEmail, setRecipientEmail] = useState("");
@@ -45,44 +46,6 @@ const App: React.FC = () => {
 
   // Ref for the end of the Generated Cold Mail Section
   const endOfEmailRef = useRef<HTMLDivElement | null>(null);
-
-  // const handleSubmit = async () => {
-  //   if (!resumeFile || !jobUrl) {
-  //     alert("Please upload a resume and provide a job link.");
-  //     return;
-  //   }
-
-  //   // To start the loading
-  //   setLoading(true)
-  //   const formData = new FormData();
-  //   formData.append("job_url", jobUrl);
-  //   formData.append("resume", resumeFile);
-
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:8900/generate-email",
-  //       formData,
-  //       {
-  //         headers: { "Content-Type": "multipart/form-data" },
-  //       }
-  //     );
-
-  //     setEmailContent(response.data);
-  //     setEditedBody(response.data.body);
-  //     setEditedSubject(response.data.subject);
-
-  //     // Scrolls to the end of the generated email section
-  //     setTimeout(() => {
-  //       endOfEmailRef.current?.scrollIntoView({ behavior: "smooth" });
-  //     }, 0);
-  //   } catch (error) {
-  //     console.error("Error generating email:", error);
-  //     alert("Failed to generate email.");
-  //   } finally {
-  //     // To stop the loading
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleFileSelect = (file: File | null) => {
     setResumeFile(file);
@@ -113,7 +76,7 @@ const App: React.FC = () => {
       setEmailContent(response.data);
       setEditedBody(response.data.body);
       setEditedSubject(response.data.subject);
-
+      console.log(companyName)
       // Scroll to the generated email section
       setTimeout(() => {
         endOfEmailRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -196,7 +159,7 @@ const App: React.FC = () => {
   }, [loading]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-200 via-blue-300 to-teal-100 text-gray-900 flex flex-col items-center justify-center px-5 py-16 space-y-16">
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 via-blue-200 to-pink-100 text-gray-900 flex flex-col items-center justify-center px-5 py-16 space-y-16">
       {/* Header Section */}
       <header className="text-center space-y-4">
         <h1 className="text-6xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-teal-500 via-purple-500 to-pink-500">
@@ -237,28 +200,21 @@ const App: React.FC = () => {
             <CardTitle className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-teal-400 to-blue-500">
               Get Started
             </CardTitle>
-            <CardDescription className="mt-2 text-blue-700 opacity-90">
+            <CardDescription className="mt-2 text-blue-700 opacity-90 text-md">
               Enter the job URL and upload your resume to generate a cold email.
             </CardDescription>
           </CardHeader>
           <CardContent className="px-8 py-6 space-y-6">
             <div className="space-y-6">
-              <div>
-                <Label
-                  htmlFor="job-url"
-                  className="text-xl font-semibold text-blue-900"
-                >
-                  Job URL 🔍
-                </Label>
-                <input
-                  id="job-url"
-                  type="text"
-                  placeholder="https://jobs.example.com"
-                  value={jobUrl}
-                  onChange={(e) => setJobUrl(e.target.value)}
-                  className="w-full mt-2 bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-2 shadow-md"
-                />
-              </div>
+              {/* The Job URL Field  */}
+              <JobURLField
+                jobUrl={jobUrl}
+                setJobUrl={setJobUrl}
+                companyName={companyName}
+                setCompanyName={setCompanyName}
+              />
+
+              {/* The Resume Upload field (.pdf only) */}
               <ResumeUpload onFileSelect={handleFileSelect} />
 
               <button
@@ -289,7 +245,7 @@ const App: React.FC = () => {
             className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-500"
             id="cold-preview"
           >
-            Generated Cold Email
+            Generated Cold Email for {companyName}
           </h3>
           <Card className="bg-blue-100 text-blue-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out transform hover:shadow-2xl">
             <CardHeader className="p-6 bg-gradient-to-r from-blue-200 via-teal-100 to-blue-300 flex justify-between items-center rounded-t-3xl">
