@@ -23,6 +23,7 @@ import ReactQuill from "react-quill";
 import { AiOutlineExpand, AiOutlineLoading3Quarters } from "react-icons/ai";
 import ResumeUpload from "./components/Drag&Drop";
 import JobURLField from "./components/JobURLField";
+import HeroSection from "./components/Hero";
 
 const App: React.FC = () => {
   const [jobUrl, setJobUrl] = useState("");
@@ -76,7 +77,7 @@ const App: React.FC = () => {
       setEmailContent(response.data);
       setEditedBody(response.data.body);
       setEditedSubject(response.data.subject);
-      console.log(companyName)
+      console.log(companyName);
       // Scroll to the generated email section
       setTimeout(() => {
         endOfEmailRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -159,17 +160,28 @@ const App: React.FC = () => {
   }, [loading]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 via-blue-200 to-pink-100 text-gray-900 flex flex-col items-center justify-center px-5 py-16 space-y-16">
+    <div className="relative min-h-screen bg-gradient-to-b from-blue-100 via-blue-50 to-indigo-100 text-gray-900 flex flex-col items-center justify-center px-5 py-16 space-y-1 overflow-hidden">
+      {/* Floating Pulsing Circles */}
+      <div className="absolute top-12 left-12 w-44 h-44 bg-gradient-to-br from-blue-200 to-teal-200 rounded-full filter blur-2xl opacity-60 animate-pulse-slow"></div>
+      <div className="absolute bottom-20 right-20 w-56 h-56 bg-gradient-to-br from-indigo-200 to-blue-300 rounded-full filter blur-3xl opacity-50 animate-pulse-slower"></div>
+      <div className="absolute top-1/4 left-1/3 w-48 h-48 bg-gradient-to-br from-blue-200 to-indigo-300 rounded-full filter blur-2xl opacity-40 animate-pulse-slow"></div>
+
+      {/* Soft Background Accents */}
+      <div className="absolute top-1/2 left-2/3 w-36 h-36 bg-gradient-to-br from-teal-100 to-indigo-200 rounded-full filter blur-3xl opacity-50 animate-pulse-slowest"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-to-br from-blue-100 to-teal-200 rounded-full filter blur-3xl opacity-45 animate-pulse-slower"></div>
+
       {/* Header Section */}
       <header className="text-center space-y-4">
-        <h1 className="text-6xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-teal-500 via-purple-500 to-pink-500">
+        <h1 className="text-6xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-teal-400 to-green-400 hover:bg-gradient-to-l transition-colors duration-500 ease-in-out">
           📧 Cold Mail Generator
         </h1>
-        <p className="text-lg md:text-xl text-blue-800 opacity-90">
+        <p className="text-lg md:text-xl text-gray-800 opacity-90">
           Generate professional cold emails tailored to your job application.
         </p>
       </header>
 
+      <HeroSection />
+      
       {/* Main Form Section */}
       <main className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-16">
         {/* Left Side - Typewriter Text */}
@@ -193,59 +205,58 @@ const App: React.FC = () => {
             get started.
           </p>
         </div>
+      {/* Right Side - Form Section */}
+      <Card className="w-full bg-white/5 backdrop-blur-md border border-blue-300 shadow-2xl rounded-2xl">
+        <CardHeader className="text-center py-6">
+          <CardTitle className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-teal-400 to-blue-500">
+            Get Started
+          </CardTitle>
+          <CardDescription className="mt-2 text-blue-700 opacity-90 text-md">
+            Enter the job URL and upload your resume to generate a cold email.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-8 py-6 space-y-6">
+          <div className="space-y-6">
+            {/* The Job URL Field  */}
+            <JobURLField
+              jobUrl={jobUrl}
+              setJobUrl={setJobUrl}
+              companyName={companyName}
+              setCompanyName={setCompanyName}
+            />
 
-        {/* Right Side - Form Section */}
-        <Card className="w-full bg-white/20 backdrop-blur-md border border-blue-300 shadow-2xl rounded-2xl">
-          <CardHeader className="text-center py-6">
-            <CardTitle className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-teal-400 to-blue-500">
-              Get Started
-            </CardTitle>
-            <CardDescription className="mt-2 text-blue-700 opacity-90 text-md">
-              Enter the job URL and upload your resume to generate a cold email.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-8 py-6 space-y-6">
-            <div className="space-y-6">
-              {/* The Job URL Field  */}
-              <JobURLField
-                jobUrl={jobUrl}
-                setJobUrl={setJobUrl}
-                companyName={companyName}
-                setCompanyName={setCompanyName}
-              />
+            {/* The Resume Upload field (.pdf only) */}
+            <ResumeUpload onFileSelect={handleFileSelect} />
 
-              {/* The Resume Upload field (.pdf only) */}
-              <ResumeUpload onFileSelect={handleFileSelect} />
-
-              <button
-                onClick={handleSubmit}
-                className={`w-full py-4 mt-6 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-xl font-semibold rounded-full transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl ${
-                  loading ? "cursor-not-allowed opacity-70" : ""
-                }`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center animate-pulse">
-                    <AiOutlineLoading3Quarters className="animate-spin mr-2" />
-                    {loadingText}
-                  </div>
-                ) : (
-                  "Generate Cold Email"
-                )}
-              </button>
-            </div>
-          </CardContent>
-        </Card>
+            <button
+              onClick={handleSubmit}
+              className={`w-full py-4 mt-6 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-xl font-semibold rounded-full transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl ${
+                loading ? "cursor-not-allowed opacity-70" : ""
+              }`}
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex items-center justify-center animate-pulse">
+                  <AiOutlineLoading3Quarters className="animate-spin mr-2" />
+                  {loadingText}
+                </div>
+              ) : (
+                "Generate Cold Email"
+              )}
+            </button>
+          </div>
+        </CardContent>
+      </Card>
       </main>
 
       {/* Generated Cold Mail Section */}
       {emailContent.subject && (
         <section className="w-full max-w-7xl space-y-8">
           <h3
-            className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-500"
+            className="mt-16 text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-500"
             id="cold-preview"
           >
-            Generated Cold Email for {companyName}
+            Generated Cold Email {(companyName)? `for ${companyName}` : ""}
           </h3>
           <Card className="bg-blue-100 text-blue-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out transform hover:shadow-2xl">
             <CardHeader className="p-6 bg-gradient-to-r from-blue-200 via-teal-100 to-blue-300 flex justify-between items-center rounded-t-3xl">
@@ -258,9 +269,11 @@ const App: React.FC = () => {
                   className="flex items-center space-x-2 bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded-lg text-sm font-semibold"
                 >
                   Copy Email
+                  {/* Scrolls down for a better view of the generated cold mail */}
+                  <div ref={endOfEmailRef}></div>
                 </Button>
                 <AiOutlineExpand
-                  className="ml-4 cursor-pointer text-xl text-blue-600 hover:text-blue-800"
+                  className="ml-4 cursor-pointer text-xl text-blue-400 hover:text-blue-900 hover:animate-pulse"
                   onClick={() => setShowExpandedPreview(true)}
                 />
               </div>
@@ -268,8 +281,6 @@ const App: React.FC = () => {
             <CardContent className="p-8 space-y-4 bg-blue-50 rounded-b-3xl ">
               <h4 className="text-2xl font-bold text-blue-800">
                 Subject: {emailContent.subject}
-                {/* Scrolls down for a better view of the generated cold mail */}
-                <div ref={endOfEmailRef}></div>
               </h4>
               <ReactQuill
                 value={emailContent.body}
