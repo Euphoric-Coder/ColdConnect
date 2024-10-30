@@ -48,9 +48,13 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({ onFileSelect }) => {
 
   return (
     <div className="mt-6">
-      <label className="block text-lg font-semibold text-blue-900 mb-2">
+      <div className="mt-10"></div>
+      <Label
+        htmlFor="job-url"
+        className="absolute left-6 text-lg font-semibold text-blue-100 bg-gradient-to-r from-blue-500 via-purple-400 to-teal-500 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
+      >
         Upload Resume
-      </label>
+      </Label>
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -71,11 +75,11 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({ onFileSelect }) => {
           ) : (
             <p className="text-blue-800 text-lg font-semibold">
               Drag & Drop your resume here
+              <br />
+              (.pdf only)
             </p>
           )}
-          <p className="text-md text-blue-500 mt-1">
-            or click to browse files
-          </p>
+          <p className="text-md text-blue-500 mt-1">or click to browse files</p>
         </div>
 
         <Label

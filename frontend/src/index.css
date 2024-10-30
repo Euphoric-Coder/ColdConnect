@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+*, .inter-font {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
@@ -11,15 +11,21 @@
   padding: 0;
 }
 
-@keyframes rainbow-gradient-pulse {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.animate-gradient-pulse {
-  background-size: 300% 300%;
-  animation: rainbow-gradient-pulse 8s ease infinite;
-}
+@keyframes gradient-move {
+            0% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+            100% {
+              background-position: 0% 50%;
+            }
+          }
+          .animate-gradient-move {
+            background-size: 300% 300%;
+            animation: gradient-move 6s linear infinite;
+          }
 
 
 

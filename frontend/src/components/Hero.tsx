@@ -6,6 +6,14 @@ export default function HeroSection() {
   const buttonGradient =
     "bg-gradient-to-r from-blue-400 via-teal-400 to-green-400 hover:from-blue-500 hover:via-teal-500 hover:to-green-500";
 
+  // Smooth scroll function to a specific id
+  const handleScrollToSection = () => {
+    const targetSection = document.getElementById("mail-generate");
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row relative overflow-hidden justify-around items-center font-mono px-6 py-8 md:px-10 md:py-10 lg:px-20 lg:py-16 h-fit gap-1 md:gap-15 m-0 p-0">
       {/* Text Section */}
@@ -35,7 +43,7 @@ export default function HeroSection() {
         </div>
 
         {/* Paragraph */}
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-700 opacity-90 leading-relaxed text-justify">
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl font-mono font-bold text-gray-700 opacity-90 leading-relaxed text-justify">
           Get started with your next{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-500 font-bold">
             career opportunity
@@ -59,7 +67,8 @@ export default function HeroSection() {
         {/* Call to Action Button */}
         <div className="mt-6">
           <Button
-            className={`px-4 py-2 sm:px-6 sm:py-3 md:px-10 md:py-4 text-base sm:text-lg md:text-xl font-bold text-white rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-transform duration-300 ${buttonGradient}`}
+            onClick={handleScrollToSection}
+            className={`px-4 py-2 sm:px-6 sm:py-3 md:px-10 md:py-4 text-base sm:text-lg md:text-xl font-bold text-white rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 active:scale-95 transition-transform duration-300 ${buttonGradient}`}
           >
             Start Generating Emails
           </Button>
