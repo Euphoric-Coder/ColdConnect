@@ -76,7 +76,10 @@ const GeneratedEmailPreview: React.FC<GeneratedEmailPreviewProps> = ({
         </div>
 
         <CardHeader className="text-center mb-8">
-          <CardTitle className="text-2xl sm:text-3xl font-bold text-blue-900 tracking-wide">
+          <CardTitle
+            id="mail-preview"
+            className="text-2xl sm:text-3xl font-bold text-blue-900 tracking-wide"
+          >
             Cold Email Preview
           </CardTitle>
         </CardHeader>

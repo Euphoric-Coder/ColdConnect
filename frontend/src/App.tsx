@@ -37,11 +37,17 @@ const App: React.FC = () => {
   // For loading text state
   const [loadingText, setLoadingText] = useState("Generating");
 
-  // Ref for the end of the Generated Cold Mail Section
-  const endOfEmailRef = useRef<HTMLDivElement | null>(null);
 
   const handleFileSelect = (file: File | null) => {
     setResumeFile(file);
+  };
+
+  // Smooth scroll function to a specific id
+  const handleScrollToSection = () => {
+    const targetSection = document.getElementById("mail-preview");
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleSubmit = async () => {
@@ -70,16 +76,14 @@ const App: React.FC = () => {
       setEditedBody(response.data.body);
       setEditedSubject(response.data.subject);
       console.log(resumeFile);
-      // Scroll to the generated email section
-      setTimeout(() => {
-        endOfEmailRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 0);
+
     } catch (error) {
       console.error("Error generating email:", error);
       alert("Failed to generate email.");
     } finally {
       // Stop loading
       setLoading(false);
+      handleScrollToSection();
     }
   };
 

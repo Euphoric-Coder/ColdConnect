@@ -106,7 +106,8 @@ export default function MainFormSection({
                 4
               </div>
               <span className="text-gray-800 text-center sm:text-left leading-snug sm:leading-normal lg:leading-relaxed">
-                <span>Review,</span> <span>personalize,</span> and <span>send</span> your cold email with confidence.
+                <span>Review,</span> <span>personalize,</span> and{" "}
+                <span>send</span> your cold email with confidence.
               </span>
             </li>
           </ul>
@@ -114,7 +115,9 @@ export default function MainFormSection({
       </div>
 
       {/* Form Section */}
-      <div className="relative w-full md:w-1/2 flex flex-col bg-white/10 backdrop-blur-lg border border-blue-300 shadow-lg rounded-2xl p-9 space-y-8">
+      <div
+        className="relative w-full md:w-1/2 flex flex-col bg-white/10 backdrop-blur-lg border border-blue-300 shadow-lg rounded-2xl p-9 space-y-8"
+      >
         {/* Job URL Field */}
         <JobURLField
           jobUrl={jobUrl}
