@@ -156,10 +156,10 @@ const App: React.FC = () => {
   }, [loading]);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-blue-100 via-blue-50 to-indigo-100 text-gray-900 flex flex-col items-center justify-center px-5 py-16 space-y-1 overflow-hidden">
+    <div className="relative min-h-screen bg-gradient-to-b from-white via-blue-50 to-indigo-50 text-gray-900 flex flex-col items-center justify-center px-5 py-16 space-y-1 overflow-hidden">
       {/* Floating Pulsing Circles */}
-      <div className="absolute top-12 left-12 w-44 h-44 bg-gradient-to-br from-blue-200 to-teal-200 rounded-full filter blur-2xl opacity-60 animate-pulse-slow"></div>
-      <div className="absolute bottom-20 right-20 w-56 h-56 bg-gradient-to-br from-indigo-200 to-blue-300 rounded-full filter blur-3xl opacity-50 animate-pulse-slower"></div>
+      <div className="absolute top-12 left-12 w-44 h-44 bg-gradient-to-br from-blue-200 to-teal-400 rounded-full filter blur-2xl opacity-60 animate-pulse-slow"></div>
+      <div className="absolute bottom-20 right-20 w-56 h-56 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-full filter blur-3xl opacity-50 animate-pulse-slower"></div>
       <div className="absolute top-1/4 left-1/3 w-48 h-48 bg-gradient-to-br from-blue-200 to-indigo-300 rounded-full filter blur-2xl opacity-40 animate-pulse-slow"></div>
 
       {/* Soft Background Accents */}

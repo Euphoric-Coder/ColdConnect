@@ -3,9 +3,9 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "./ui/card";
 import {
   AiOutlineExpand,
-  AiOutlineLoading3Quarters,
   AiOutlineMail,
   AiOutlineEdit,
+  AiOutlineCopy,
 } from "react-icons/ai";
 import ReactQuill from "react-quill";
 
@@ -41,37 +41,49 @@ const GeneratedEmailPreview: React.FC<GeneratedEmailPreviewProps> = ({
           {/* Copy Button */}
           <Button
             onClick={copyToClipboard}
-            className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 p-3 rounded-full text-white shadow-lg transform transition duration-300 hover:scale-110"
+            className="relative flex items-center justify-center bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-blue-500 hover:to-teal-500 p-3 rounded-full text-white shadow-md transition-all duration-300 hover:scale-110 hover:shadow-lg group"
             title="Copy Email"
           >
-            <AiOutlineLoading3Quarters className="text-xl" />
+            <AiOutlineCopy className="text-xl" />
+            <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-xs font-semibold text-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              Copy Mail
+            </span>
           </Button>
 
           {/* Expand Button */}
           <Button
             onClick={() => setShowExpandedPreview(true)}
-            className="flex items-center justify-center bg-gradient-to-r from-teal-400 to-blue-500 hover:from-blue-500 hover:to-teal-400 p-3 rounded-full text-white shadow-lg transform transition duration-300 hover:scale-110"
+            className="relative flex items-center justify-center bg-gradient-to-r from-teal-500 via-purple-500 to-indigo-500 hover:from-indigo-500 hover:to-teal-400 p-3 rounded-full text-white shadow-md transition-all duration-300 hover:scale-110 hover:shadow-lg group"
             title="Expand Email"
           >
             <AiOutlineExpand className="text-xl" />
+            <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 text-xs font-semibold text-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              Full Screen
+            </span>
           </Button>
 
           {/* Send Email Button */}
           <Button
             onClick={() => setShowSendDialog(true)}
-            className="flex items-center justify-center bg-gradient-to-r from-green-500 to-blue-500 hover:from-blue-600 hover:to-green-500 p-3 rounded-full text-white shadow-lg transform transition duration-300 hover:scale-110"
+            className="relative flex items-center justify-center bg-gradient-to-r from-green-500 via-blue-500 to-cyan-500 hover:from-cyan-600 hover:to-green-500 p-3 rounded-full text-white shadow-md transition-all duration-300 hover:scale-110 hover:shadow-lg group"
             title="Send Email"
           >
             <AiOutlineMail className="text-xl" />
+            <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gradient-to-r from-teal-400 via-green-500 to-cyan-500 text-xs font-semibold text-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              Send Mail
+            </span>
           </Button>
 
           {/* Edit Email Button */}
           <Button
             onClick={() => setShowEditorDialog(true)}
-            className="flex items-center justify-center bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 p-3 rounded-full text-white shadow-lg transform transition duration-300 hover:scale-110"
+            className="relative flex items-center justify-center bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-red-500 hover:to-purple-500 p-3 rounded-full text-white shadow-md transition-all duration-300 hover:scale-110 hover:shadow-lg group"
             title="Edit Email"
           >
             <AiOutlineEdit className="text-xl" />
+            <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gradient-to-r from-pink-400 via-red-500 to-purple-500 text-xs font-semibold text-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              Edit Mail
+            </span>
           </Button>
         </div>
 

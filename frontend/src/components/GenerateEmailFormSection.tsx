@@ -99,17 +99,6 @@ export default function MainFormSection({
                 to receive a tailored draft.
               </span>
             </li>
-
-            {/* Step 4 */}
-            <li className="flex flex-col sm:flex-row items-center sm:items-start gap-4 lg:gap-6 p-4 md:p-6 lg:p-8 text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold bg-gradient-to-br from-purple-50 via-blue-100 to-green-50 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-200">
-              <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full text-white text-base md:text-lg lg:text-xl xl:text-2xl">
-                4
-              </div>
-              <span className="text-gray-800 text-center sm:text-left leading-snug sm:leading-normal lg:leading-relaxed">
-                <span>Review,</span> <span>personalize,</span> and{" "}
-                <span>send</span> your cold email with confidence.
-              </span>
-            </li>
           </ul>
         </div>
       </div>
