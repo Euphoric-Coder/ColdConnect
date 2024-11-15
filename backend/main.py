@@ -13,7 +13,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["https://cold-connect.netlify.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,7 +52,7 @@ async def fetch_company_name(job_url: str = Form(...)):
         # Initialize WebBaseLoader with the job URL and scrape page content
         loader = WebBaseLoader([job_url])
         job_page = loader.load().pop().page_content
-        
+        print(chain.extract_company_name(job_page))
         return chain.extract_company_name(job_page)
     except Exception as e:
         print({"error": str(e)})
@@ -71,7 +71,8 @@ async def send_email(
         service = GMail_API()
         email_message = create_email_message(subject, body, recipient_email)
         service.users().messages().send(userId="me", body=email_message).execute()
-        return {"message": "Email sent successfully"}
+        print("Mail sent successfully!")
+        # return {"message": "Email sent successfully"}
     except Exception as e:
         print(f"Error: {e}")  # Debugging statement
         return {"error": str(e)}

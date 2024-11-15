@@ -27,7 +27,7 @@ const JobURLField: React.FC<JobURLFieldProps> = ({
 
       try {
         const response = await axios.post(
-          "http://localhost:8900/fetch-company-name",
+          `${import.meta.env.VITE_BACKEND_URL}/fetch-company-name`,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },

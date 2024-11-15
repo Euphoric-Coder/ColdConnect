@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
@@ -37,7 +37,6 @@ const App: React.FC = () => {
   // For loading text state
   const [loadingText, setLoadingText] = useState("Generating");
 
-
   const handleFileSelect = (file: File | null) => {
     setResumeFile(file);
   };
@@ -65,7 +64,7 @@ const App: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8900/generate-email",
+        `${import.meta.env.VITE_BACKEND_URL}/generate-email`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -76,7 +75,6 @@ const App: React.FC = () => {
       setEditedBody(response.data.body);
       setEditedSubject(response.data.subject);
       console.log(resumeFile);
-
     } catch (error) {
       console.error("Error generating email:", error);
       alert("Failed to generate email.");
@@ -99,9 +97,13 @@ const App: React.FC = () => {
     formData.append("body", emailContent.body);
     console.log(emailContent.body);
     try {
-      await axios.post("http://localhost:8900/send-email", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/send-email`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       alert("Email sent successfully!");
     } catch (error) {
       console.error("Failed to send email:", error);
@@ -266,7 +268,9 @@ const App: React.FC = () => {
       <Dialog open={showSendDialog} onOpenChange={setShowSendDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Enter Recipient Emails</DialogTitle>
+            <DialogTitle>
+              Enter Recipient Emails (Still working on this feature....)
+            </DialogTitle>
             <DialogDescription>
               Add email addresses to the recipient list. You can edit or delete
               them as needed.
@@ -274,6 +278,7 @@ const App: React.FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <Input
+              disabled
               type="email"
               placeholder="Enter recipient email"
               value={recipientEmail}
@@ -281,6 +286,7 @@ const App: React.FC = () => {
               className="w-full mt-2 bg-blue-50 text-blue-800 placeholder-blue-300 border border-blue-300 focus:ring-2 focus:ring-teal-400 rounded-lg p-4 shadow-md"
             />
             <Button
+              disabled
               className="w-full mt-4 py-2 bg-teal-400 text-white rounded-md"
               onClick={addOrUpdateRecipientEmail}
             >
@@ -313,6 +319,7 @@ const App: React.FC = () => {
               </ul>
             </div>
             <Button
+              disabled
               className="w-full mt-6 py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-teal-400 hover:to-blue-500 shadow-lg text-lg font-semibold rounded-full"
               onClick={() => {
                 sendMail();

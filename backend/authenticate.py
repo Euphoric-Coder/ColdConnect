@@ -12,7 +12,7 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.modify"]
 def GMail_API():
     creds = None
     cred_path = os.path.join(os.path.dirname(__file__), "credentials.json")
-    token_path = os.path.join(os.path.dirname(__file__), "token.pickle")
+    token_path = os.path.join(os.path.dirname(__file__), "token.json")
 
     # Load existing credentials
     if os.path.exists(token_path):
@@ -39,3 +39,9 @@ def create_email_message(subject: str, body: str, recipient_email: str):
     message["from"] = "deydsagnik48@gmail.com"
     message["subject"] = subject
     return {"raw": base64.urlsafe_b64encode(message.as_bytes()).decode()}
+
+
+if __name__ == "__main__":
+    service = GMail_API()
+    email_message = create_email_message("testing", "Hi, this is just a test", "deydsagnik@gmail.com")
+    service.users().messages().send(userId="me", body=email_message).execute()

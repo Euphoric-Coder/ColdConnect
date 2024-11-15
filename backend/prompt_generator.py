@@ -38,7 +38,6 @@ class Generate:
         )
         chain_extract = prompt_extract | self.llm
         res = chain_extract.invoke(input={"page_data": job_description})
-        
         try:
             json_parser = JsonOutputParser()
             res = json_parser.parse(res.content)
