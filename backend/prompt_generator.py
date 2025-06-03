@@ -14,7 +14,7 @@ class Generate:
         self.llm = ChatGroq(
             temperature=0,
             groq_api_key=os.getenv("GROQ_API_KEY"),
-            model_name="llama-3.1-70b-versatile",
+            model_name="llama-3.3-70b-versatile",
         )
     def extract_resume(self, file_path):
         reader = pdf.PdfReader(file_path)
