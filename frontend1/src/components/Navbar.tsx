@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Mail, Moon, Sun } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useTheme } from '../contexts/ThemeContext';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Mail, Moon, Sun } from "lucide-react";
+import { motion } from "framer-motion";
+import { useTheme } from "../contexts/ThemeContext";
+import { SignInButton, SignOutButton, useUser } from "@clerk/clerk-react";
 
 const Navbar: React.FC = () => {
+  const { user, isSignedIn } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -25,23 +27,27 @@ const Navbar: React.FC = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Features', path: '/#features' },
-    { name: 'Get Started', path: '/generator' },
-    { name: 'Contact', path: '/#contact' },
+    { name: "Home", path: "/" },
+    { name: "Features", path: "/#features" },
+    { name: "Get Started", path: "/generator" },
+    { name: "Contact", path: "/#contact" },
   ];
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white/90 dark:bg-dark-900/90 backdrop-blur-md shadow-md' : 'bg-transparent'
-    }`}>
+    <header
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/90 dark:bg-dark-900/90 backdrop-blur-md shadow-md"
+          : "bg-transparent"
+      }`}
+    >
       <div className="container mx-auto px-4 md:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -57,7 +63,7 @@ const Navbar: React.FC = () => {
                 key={item.name}
                 to={item.path}
                 className={`font-medium hover:text-primary-500 transition-colors ${
-                  location.pathname === item.path ? 'text-primary-500' : ''
+                  location.pathname === item.path ? "text-primary-500" : ""
                 }`}
               >
                 {item.name}
@@ -71,13 +77,11 @@ const Navbar: React.FC = () => {
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-dark-100 dark:hover:bg-dark-800 transition-colors"
-              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              aria-label={`Switch to ${
+                theme === "light" ? "dark" : "light"
+              } mode`}
             >
-              {theme === 'light' ? (
-                <Moon size={20} />
-              ) : (
-                <Sun size={20} />
-              )}
+              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
             {/* Get Started Button (Desktop) */}
@@ -87,6 +91,8 @@ const Navbar: React.FC = () => {
             >
               Get Started
             </Link>
+
+            {!isSignedIn ? <SignInButton /> : <SignOutButton />}
 
             {/* Mobile Menu Button */}
             <button
@@ -103,7 +109,11 @@ const Navbar: React.FC = () => {
       {/* Mobile Menu */}
       <motion.div
         initial={false}
-        animate={isMenuOpen ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+        animate={
+          isMenuOpen
+            ? { height: "auto", opacity: 1 }
+            : { height: 0, opacity: 0 }
+        }
         transition={{ duration: 0.3 }}
         className="md:hidden overflow-hidden bg-white dark:bg-dark-900"
       >
@@ -114,7 +124,7 @@ const Navbar: React.FC = () => {
                 key={item.name}
                 to={item.path}
                 className={`font-medium py-2 hover:text-primary-500 transition-colors ${
-                  location.pathname === item.path ? 'text-primary-500' : ''
+                  location.pathname === item.path ? "text-primary-500" : ""
                 }`}
               >
                 {item.name}

@@ -17,6 +17,7 @@ client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["ColdConnect"]
 users = db["users"]
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://cold-connect.netlify.app", "http://localhost:5173", "http://localhost:5175"],

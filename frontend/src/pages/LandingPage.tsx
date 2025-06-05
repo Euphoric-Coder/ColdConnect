@@ -47,13 +47,15 @@ const LandingPage: React.FC = () => {
         formData.append("email", user.primaryEmailAddress?.emailAddress || "");
         formData.append("user_id", user.id);
 
-        await fetch("http://localhost:8900/add-user", {
+        const result = await fetch("http://localhost:8900/add-user", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: formData,
         });
+
+        console.log(await result.json());
 
         setHasAddedUser(true);
       }
@@ -71,24 +73,6 @@ const LandingPage: React.FC = () => {
 
   // For loading text state
   const [loadingText, setLoadingText] = useState("Generating");
-
-  const AddUser = async () => {
-    const formData = new FormData();
-    // @ts-expect-error // to be ignored
-    formData.append("name", user?.fullName);
-    // @ts-expect-error // to be ignored
-    formData.append("email", user?.primaryEmailAddress?.emailAddress);
-    // @ts-expect-error // to be ignored
-    formData.append("user_id", user?.id);
-
-    await fetch("http://localhost:8900/add-user", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-  };
 
   const handleFileSelect = (file: File | null) => {
     setResumeFile(file);

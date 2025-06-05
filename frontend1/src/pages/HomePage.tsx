@@ -1,11 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FileText, Target, Zap, Mail, ArrowRight, Send } from 'lucide-react';
 import Button from '../components/Button';
 import FeatureCard from '../components/FeatureCard';
+import { useAuth, useUser } from '@clerk/clerk-react';
 
 const HomePage: React.FC = () => {
+  const { user, isSignedIn } = useUser();
+  const { getToken } = useAuth();
+  const[hasAddedUser, setHasAddedUser] = useState(false); // to avoid re-posting
+
+  useEffect(() => {
+    const addUser = async () => {
+      if (isSignedIn && user && !hasAddedUser) {
+        const token = await getToken();
+        const formData = new FormData();
+        formData.append("name", user.fullName || "");
+        formData.append("email", user.primaryEmailAddress?.emailAddress || "");
+        formData.append("user_id", user.id);
+
+        const result = await fetch("http://localhost:8900/add-user", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        console.log(await result.json());
+
+        setHasAddedUser(true);
+      }
+    };
+
+    addUser();
+  }, [isSignedIn, user, getToken, hasAddedUser]);
+
   return (
     <div className="pt-16">
       {/* Hero Section */}
