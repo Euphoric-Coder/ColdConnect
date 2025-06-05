@@ -8,8 +8,14 @@ from text_format import clean_text
 from project import Portfolio
 import PyPDF2 as pdf
 from authenticate import GMail_API, create_email_message
+import pymongo
 
 app = FastAPI()
+
+# MongoDB setup
+client = pymongo.MongoClient("mongodb://localhost:27017/")
+db = client["ColdConnect"]
+users = db["users"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -76,6 +82,27 @@ async def send_email(
     except Exception as e:
         print(f"Error: {e}")  # Debugging statement
         return {"error": str(e)}
+    
+@app.post("/add-user")
+async def add_user(
+    name: str = Form(...),
+    email: str = Form(...),
+    user_id: str = Form(...),
+):
+
+    # Optional: cross-check email/name with Clerk's user API if you want to be extra strict
+
+    if(users.find_one({"user_id": user_id})):
+        print("User already exists")
+        return {"message": "User already exists"}
+
+    users.insert_one({
+        "user_id": user_id,
+        "name": name,
+        "email": email
+    })
+    print(name, user_id, email)
+    return {"message": "User saved"}
 
 
 if __name__ == "__main__":

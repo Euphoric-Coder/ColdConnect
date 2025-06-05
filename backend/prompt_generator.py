@@ -1,5 +1,6 @@
 import os
 from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.exceptions import OutputParserException
@@ -11,11 +12,14 @@ load_dotenv()
 
 class Generate:
     def __init__(self):
-        self.llm = ChatGroq(
-            temperature=0,
-            groq_api_key=os.getenv("GROQ_API_KEY"),
-            model_name="llama-3.3-70b-versatile",
-        )
+        self.llm = ChatGoogleGenerativeAI(
+        api_key = os.getenv("GEMINI_API_KEY"),
+        model="gemini-2.0-flash",
+        temperature=0,
+        max_tokens=None,
+        timeout=None,
+        max_retries=2,
+        ) 
     def extract_resume(self, file_path):
         reader = pdf.PdfReader(file_path)
         resume = ""
@@ -113,3 +117,13 @@ class Generate:
 
 if __name__ == "__main__":
     print(os.getenv("GROQ_API_KEY"))
+
+    llm = ChatGoogleGenerativeAI(
+    api_key = os.getenv("GEMINI_API_KEY"),
+    model="gemini-2.0-flash",
+    temperature=0,
+    max_tokens=None,
+    timeout=None,
+    max_retries=2,
+    # other params...
+)

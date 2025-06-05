@@ -16,10 +16,14 @@ import HeroSection from "../components/Hero";
 import MainFormSection from "../components/GenerateEmailFormSection";
 import AppTitle from "../components/AppTitle";
 import GeneratedEmailPreview from "../components/GeneratedEmailPreview";
-import { useUser } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 const LandingPage: React.FC = () => {
   const { user, isSignedIn } = useUser();
+  const { getToken } = useAuth();
+
+  const token = getToken();
+
   const [jobUrl, setJobUrl] = useState("");
   const [companyName, setCompanyName] = useState<string | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -32,26 +36,59 @@ const LandingPage: React.FC = () => {
   const [showEditorDialog, setShowEditorDialog] = useState(false);
   const [editedBody, setEditedBody] = useState(emailContent.body);
   const [editedSubject, setEditedSubject] = useState(emailContent.subject);
+  const [hasAddedUser, setHasAddedUser] = useState(false); // to avoid re-posting
 
-  if (!isSignedIn && !user) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-white via-blue-50 to-indigo-50 text-gray-900">
-        <h1 className="text-3xl font-bold mb-4">Please Sign In</h1>
-        <p className="text-lg mb-6">
-          You need to be signed in to use this app.
-        </p>
-        <Button asChild>
-          <a href="/sign-in">Sign In</a>
-        </Button>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const addUser = async () => {
+      if (isSignedIn && user && !hasAddedUser) {
+        const token = await getToken();
+        const formData = new FormData();
+        formData.append("name", user.fullName || "");
+        formData.append("email", user.primaryEmailAddress?.emailAddress || "");
+        formData.append("user_id", user.id);
+
+        await fetch("http://localhost:8900/add-user", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        setHasAddedUser(true);
+      }
+    };
+
+    addUser();
+  }, [isSignedIn, user, getToken, hasAddedUser]);
+
+  // if (user === undefined) {
+  //   return <div className="text-center p-10 text-xl">Loading...</div>;
+  // }
 
   // For loading state
   const [loading, setLoading] = useState(false);
 
   // For loading text state
   const [loadingText, setLoadingText] = useState("Generating");
+
+  const AddUser = async () => {
+    const formData = new FormData();
+    // @ts-expect-error // to be ignored
+    formData.append("name", user?.fullName);
+    // @ts-expect-error // to be ignored
+    formData.append("email", user?.primaryEmailAddress?.emailAddress);
+    // @ts-expect-error // to be ignored
+    formData.append("user_id", user?.id);
+
+    await fetch("http://localhost:8900/add-user", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  };
 
   const handleFileSelect = (file: File | null) => {
     setResumeFile(file);
