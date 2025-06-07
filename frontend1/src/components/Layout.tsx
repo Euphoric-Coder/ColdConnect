@@ -22,7 +22,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </motion.main>
       </AnimatePresence>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

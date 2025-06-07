@@ -146,8 +146,8 @@ const HomePage: React.FC = () => {
                   </div>
                   
                   <div className="flex justify-end space-x-2 mt-4">
-                    <Button variant="outline" size="sm">Copy</Button>
-                    <Button variant="primary" size="sm">Send</Button>
+                    <Button variant="outline" size="sm" disabled>Copy</Button>
+                    <Button variant="primary" size="sm" disabled>Send</Button>
                   </div>
                 </div>
               </div>
