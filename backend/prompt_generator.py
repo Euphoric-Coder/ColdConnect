@@ -47,7 +47,7 @@ class Generate:
             res = json_parser.parse(res.content)
         except OutputParserException:
             raise OutputParserException("Context too big or ambiguous. Unable to parse company name.")
-        
+
         return res if isinstance(res, dict) else {"company_name": res}
 
     def extract_jobs(self, formatted_text):
@@ -98,8 +98,27 @@ class Generate:
             6. Close with a professional statement, expressing interest in discussing qualifications further.
             7. Lastly, end the mail with formal thanks, my name and my contact details (with clickable links as target="_blank")
 
-            The body should be in HTML format, with the following requirements:
+            The body should be in HTML format only and nothing else no *** or ** or ***_ _*** or * markdown styling, with the following requirements:
             - Bold key skills and qualifications.
+            - Italic project names.
+            - Use appropriate HTML tags for structure (e.g., `<h1>`, `<p>`, `<ul>`, `<li>`).
+            - Ensure the email is visually appealing and easy to read.
+            - Use a professional tone and language.
+            - Use proper HTML formatting for links, ensuring they are clickable.
+            - Use `<strong>` for emphasis on key points.
+            - Use `<ul>` and `<li>` for lists.
+            - Use `<a href="URL" target="_blank">Link Text</a>` for clickable links.
+            - Use `<p>` for paragraphs.
+            - Use `<h1>`, `<h2>`, etc., for headings.
+            - Use `<br>` for line breaks.
+            - Use `<b>` for bold text.
+            - Use `<i>` for italic text.
+            - Use `<div>` for sections.
+            - Use `<span>` for inline styling.
+            - Use `<strong>` for strong emphasis.
+            - Use `<em>` for emphasis.
+            - Use `<blockquote>` for quotes.
+            - Use `<code>` for code snippets.
             - Use bullet points for lists.
             - Links from `{links_list}` should be clickable URLs with project names.
 

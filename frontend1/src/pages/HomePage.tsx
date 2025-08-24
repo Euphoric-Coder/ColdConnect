@@ -101,8 +101,9 @@ const HomePage: React.FC = () => {
                 <Button 
                   to="/generator" 
                   variant="primary" 
-                  size="lg"
+                  size="md"
                   icon={Send}
+                  className='rounded-3xl'
                 >
                   Start Generating Emails
                 </Button>
@@ -110,7 +111,8 @@ const HomePage: React.FC = () => {
                 <Button 
                   to="/#features" 
                   variant="secondary" 
-                  size="lg"
+                  size="md"
+                  className='rounded-3xl'
                 >
                   Learn More
                 </Button>
