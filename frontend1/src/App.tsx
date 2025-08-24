@@ -57,6 +57,20 @@ function App() {
           </>
         }
       />
+
+      <Route
+        path="/generate"
+        element={
+          <>
+            <SignedIn>
+              <GeneratorPage />
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        }
+      />
     </Routes>
   );
 }

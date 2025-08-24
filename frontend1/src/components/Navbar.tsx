@@ -4,6 +4,7 @@ import { Menu, X, Mail, Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../contexts/ThemeContext";
 import { SignInButton, SignOutButton, useUser } from "@clerk/clerk-react";
+import Button from "./Button";
 
 const Navbar: React.FC = () => {
   const { user, isSignedIn } = useUser();
@@ -72,7 +73,7 @@ const Navbar: React.FC = () => {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center">
+          <div className="flex gap-2 items-center">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -86,13 +87,33 @@ const Navbar: React.FC = () => {
 
             {/* Get Started Button (Desktop) */}
             <Link
-              to="/generator"
-              className="hidden md:block btn btn-primary ml-4"
+              to="/generate"
+              className="hidden md:block btn btn-primary rounded-3xl ml-4"
             >
               Get Started
             </Link>
 
-            {!isSignedIn ? <SignInButton /> : <SignOutButton />}
+            {!isSignedIn ? (
+              <SignInButton>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  className="rounded-3xl"
+                >
+                  Sign In
+                </Button>
+              </SignInButton>
+            ) : (
+              <SignOutButton>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  className="rounded-3xl"
+                >
+                  Sign Out
+                </Button>
+              </SignOutButton>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -131,7 +152,7 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
             <Link
-              to="/generator"
+              to="/generate"
               className="btn btn-primary w-full justify-center mt-2"
             >
               Get Started
