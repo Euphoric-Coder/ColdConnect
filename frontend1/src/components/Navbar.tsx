@@ -3,7 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Mail, Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../contexts/ThemeContext";
-import { SignInButton, SignOutButton, useUser } from "@clerk/clerk-react";
+import {
+  SignInButton,
+  SignOutButton,
+  UserButton,
+  useUser,
+} from "@clerk/clerk-react";
 import Button from "./Button";
 
 const Navbar: React.FC = () => {
@@ -37,7 +42,7 @@ const Navbar: React.FC = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Features", path: "/#features" },
-    { name: "Get Started", path: "/generator" },
+    { name: "Get Started", path: "/generate" },
     { name: "Contact", path: "/#contact" },
   ];
 
@@ -50,7 +55,7 @@ const Navbar: React.FC = () => {
       }`}
     >
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between py-6">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <Mail className="h-8 w-8 text-primary-500" />
@@ -85,35 +90,33 @@ const Navbar: React.FC = () => {
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
-            {/* Get Started Button (Desktop) */}
-            <Link
-              to="/generate"
-              className="hidden md:block btn btn-primary rounded-3xl ml-4"
-            >
-              Get Started
-            </Link>
+            <UserButton />
 
-            {!isSignedIn ? (
-              <SignInButton>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  className="rounded-3xl"
-                >
-                  Sign In
-                </Button>
-              </SignInButton>
-            ) : (
-              <SignOutButton>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  className="rounded-3xl"
-                >
-                  Sign Out
-                </Button>
-              </SignOutButton>
+            {/* Get Started Button (Desktop) */}
+            {!isSignedIn && (
+              <Link
+                to="/generate"
+                className="hidden md:block btn btn-primary rounded-3xl"
+              >
+                Get Started
+              </Link>
             )}
+
+            <div className="hidden md:flex">
+              {!isSignedIn ? (
+                <SignInButton>
+                  <Button variant="secondary" size="md" className="rounded-3xl">
+                    Sign In
+                  </Button>
+                </SignInButton>
+              ) : (
+                <SignOutButton>
+                  <Button variant="secondary" size="md" className="rounded-3xl">
+                    Sign Out
+                  </Button>
+                </SignOutButton>
+              )}
+            </div>
 
             {/* Mobile Menu Button */}
             <button

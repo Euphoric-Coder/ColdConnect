@@ -63,7 +63,9 @@ function App() {
         element={
           <>
             <SignedIn>
-              <GeneratorPage />
+              <Layout>
+                <GeneratorPage />
+              </Layout>
             </SignedIn>
             <SignedOut>
               <RedirectToSignIn />
