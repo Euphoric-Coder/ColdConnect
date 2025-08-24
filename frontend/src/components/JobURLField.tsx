@@ -34,6 +34,7 @@ const JobURLField: React.FC<JobURLFieldProps> = ({
           }
         );
         const data = response.data;
+        console.log(data);
         if (data.company_name) {
           setCompanyName(data.company_name);
         } else {
