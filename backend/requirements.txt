@@ -122,6 +122,7 @@ sniffio
 soupsieve
 SQLAlchemy
 starlette
+svix
 sympy
 tenacity
 tokenizers

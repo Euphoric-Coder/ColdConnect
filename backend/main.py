@@ -7,7 +7,7 @@ from prompt_generator import Generate
 from text_format import clean_text
 from project import Portfolio
 import PyPDF2 as pdf
-from authenticate import GMail_API, create_email_message
+# from authenticate import GMail_API, create_email_message
 import pymongo
 
 app = FastAPI()
@@ -75,10 +75,10 @@ async def send_email(
         print(f"Subject: {subject}")
         print(f"Body: {body}")
 
-        service = GMail_API()
-        email_message = create_email_message(subject, body, recipient_email)
-        service.users().messages().send(userId="me", body=email_message).execute()
-        print("Mail sent successfully!")
+        # service = GMail_API()
+        # email_message = create_email_message(subject, body, recipient_email)
+        # service.users().messages().send(userId="me", body=email_message).execute()
+        # print("Mail sent successfully!")
         # return {"message": "Email sent successfully"}
     except Exception as e:
         print(f"Error: {e}")  # Debugging statement
